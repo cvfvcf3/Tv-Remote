@@ -11,7 +11,10 @@ import java.util.concurrent.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val PORT = 4321
+    private val PORT = 3229
+    private val DEVICE_NAME = "Vivo Y20"
+    private val APPS_LIST = "com.android.settings|com.android.browser|com.android.camera"
+
     private var tvSocket: Socket? = null
     private var tvWriter: PrintWriter? = null
     private var tvIp = ""
@@ -65,11 +68,9 @@ class MainActivity : AppCompatActivity() {
             if (ip.isNotEmpty()) connectToTv(ip)
             else toast("IP address darj karein")
         }
-
         findViewById<Button>(R.id.btnDisconnect).setOnClickListener {
             disconnectAndGoBack()
         }
-
         setKey(R.id.btnPower, 26)
         setKey(R.id.btnUp, 19)
         setKey(R.id.btnDown, 20)
@@ -137,8 +138,8 @@ class MainActivity : AppCompatActivity() {
                 tvSocket = socket
                 tvWriter = PrintWriter(BufferedWriter(OutputStreamWriter(socket.outputStream)), true)
 
-                // TV ko handshake bhejein — screen pe naam dikhega
-                tvWriter?.print("phone=Vivo Y20&")
+                // Sahi handshake — fname + apps list
+                tvWriter?.print("fname=$DEVICE_NAME&apps=$APPS_LIST&")
                 tvWriter?.flush()
 
                 tvIp = ip
@@ -162,7 +163,7 @@ class MainActivity : AppCompatActivity() {
                         tvStatus.setTextColor(resources.getColor(android.R.color.holo_red_light, null))
                         reconnect()
                     } else {
-                        setStatus("Connect nahi hua: ${e.message}", true)
+                        setStatus("Connect nahi hua — pehle TV pe remote app kholen!", true)
                         progressSearch.visibility = View.GONE
                         btnSearch.isEnabled = true
                         btnManualConnect.isEnabled = true
@@ -193,7 +194,7 @@ class MainActivity : AppCompatActivity() {
         btnSearch.isEnabled = false
         btnManualConnect.isEnabled = false
         progressSearch.visibility = View.VISIBLE
-        setStatus("TV dhundh raha hai...", false)
+        setStatus("TV dhundh raha hai — pehle TV pe remote app kholen!", false)
 
         val wifiMgr = applicationContext.getSystemService(WIFI_SERVICE) as android.net.wifi.WifiManager
         val ipInt = wifiMgr.connectionInfo.ipAddress
@@ -247,7 +248,7 @@ class MainActivity : AppCompatActivity() {
                     progressSearch.visibility = View.GONE
                     btnSearch.isEnabled = true
                     btnManualConnect.isEnabled = true
-                    setStatus("TV nahi mila. IP manually darj karein.", true)
+                    setStatus("TV nahi mila — pehle TV pe remote app kholen!", true)
                 }
             }
         }
