@@ -11,7 +11,7 @@ import java.util.concurrent.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val PORT = 3229
+    private val PORT = 9000
     private val DEVICE_NAME = "Vivo Y20"
     private val APPS_LIST = "com.android.settings|com.android.browser|com.android.camera"
 
