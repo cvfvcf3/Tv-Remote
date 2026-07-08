@@ -136,9 +136,15 @@ class MainActivity : AppCompatActivity() {
                 socket.soTimeout = 0
                 tvSocket = socket
                 tvWriter = PrintWriter(BufferedWriter(OutputStreamWriter(socket.outputStream)), true)
+
+                // TV ko handshake bhejein — screen pe naam dikhega
+                tvWriter?.print("phone=Vivo Y20&")
+                tvWriter?.flush()
+
                 tvIp = ip
                 isConnected = true
                 prefs.edit().putString("last_ip", ip).apply()
+
                 uiHandler.post {
                     layoutConnect.visibility = View.GONE
                     layoutRemote.visibility = View.VISIBLE
@@ -147,7 +153,7 @@ class MainActivity : AppCompatActivity() {
                     tvStatus.setTextColor(resources.getColor(android.R.color.holo_green_light, null))
                     cancelReconnect()
                 }
-                monitorConnection(socket)
+
             } catch (e: Exception) {
                 isConnected = false
                 uiHandler.post {
@@ -160,28 +166,6 @@ class MainActivity : AppCompatActivity() {
                         progressSearch.visibility = View.GONE
                         btnSearch.isEnabled = true
                         btnManualConnect.isEnabled = true
-                    }
-                }
-            }
-        }
-    }
-
-    private fun monitorConnection(socket: Socket) {
-        executor.execute {
-            try {
-                val reader = BufferedReader(InputStreamReader(socket.inputStream))
-                while (!socket.isClosed) {
-                    val line = reader.readLine() ?: break
-                }
-            } catch (e: Exception) {
-                // connection dropped
-            } finally {
-                if (isConnected) {
-                    isConnected = false
-                    uiHandler.post {
-                        tvStatus.text = "● Disconnected - Reconnecting..."
-                        tvStatus.setTextColor(resources.getColor(android.R.color.holo_orange_light, null))
-                        reconnect()
                     }
                 }
             }
