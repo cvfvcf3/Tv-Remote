@@ -11,7 +11,7 @@ import java.util.concurrent.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val PORT = 3229
+    private val PORT = 4321
     private var tvSocket: Socket? = null
     private var tvWriter: PrintWriter? = null
     private var tvIp = ""
